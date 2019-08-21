@@ -38,6 +38,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         queryField.endEditing(true)
         search(query)
     }
+
+    @IBAction func textFieldPrimaryActionTriggered(_ sender: Any) {
+        guard let query: String = queryField.text, !query.isEmpty else {
+            print("검색어를 입력해주세요")
+            return
+        }
+        queryField.endEditing(true)
+        search(query)
+    }
+
     
     func search(_ query: String) {
         print("\(query)를 검색할겁니다.")
@@ -65,6 +75,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 print("no data")
                 return
             }
+            
+//            guard let image: UIImage = UIImage(data: data) else {
+//                print("이미지 변환 실패")
+//                return
+//            }
+            
             let decoder: JSONDecoder = JSONDecoder()
             do {
                 let response: MovieResponse
@@ -93,6 +109,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             cell.detailTextLabel?.text = pubDate
         }
         return cell
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let cell = sender as? UITableViewCell else { return }
+        guard let nextViewController = segue.destination as? DetailViewController else { return }
+        
+        if let indexPath = tableView.indexPath(for: cell),
+            let link = movies[indexPath.row].link {
+            nextViewController.link = link
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
